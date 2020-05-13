@@ -40,7 +40,7 @@ const initialCards = [
       link: 'https://pictures.s3.yandex.net/frontend-developer/cards-compressed/vladivostok.jpg'
      }
   ];
-  const erorMasages = {
+  const erorMessages = {
     empty: 'Это обязательное поле',
     shortOrLong: 'Должно быть от 2 до 30 символов'
   };

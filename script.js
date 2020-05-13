@@ -223,20 +223,27 @@ function validationForm(form) {
 
 }
 
-// Функция проверки одного поля, принимает элемент поля, проверяет на валидность, возвращает true/false
+// Функция проверки одного поля, принимает элемент поля, проверяет на валидность, возвращает false
 function checkInputValidity(element) {
   const errorМessage = document.querySelector(`#error-${element.id}`)
+  // const element = element;
   // проверить элемент на ошибку
+  console.log(element.validity)
   if (element.value.length === 0) {
     // показывает ошибку
-    errorМessage.textContent = erorMasages.empty;
+    element.setCustomValidity(erorMessages.empty);
+    errorМessage.textContent = element.validationMessage;
+    console.log(element.validity)
     return false;
   }
   else if (element.value.length < 2 || element.value.length > 30) {
-    errorМessage.textContent = erorMasages.shortOrLong;
+    element.setCustomValidity(erorMessages.shortOrLong);
+    errorМessage.textContent = element.validationMessage;
+    console.log(element.validity)
     return false;
   }
   else {
+    element.setCustomValidity = ''
     errorМessage.textContent = '';
   }
 }
