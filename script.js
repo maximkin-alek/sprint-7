@@ -243,7 +243,7 @@ function checkInputValidity(element) {
     return false;
   }
   else {
-    element.setCustomValidity = ''
+    element.setCustomValidity('');
     errorМessage.textContent = '';
   }
 }
