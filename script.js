@@ -13,6 +13,8 @@ const buttonEditCard = document.querySelector('.popup-edit-card__button');
 const buttonCloseFormAdd = document.querySelector('.popup-add-card__close');
 // кнопка закрыть форму редактирования
 const buttonCloseFormEdit = document.querySelector('.popup-edit-card__close');
+// форма добавления карточки
+const formAdd = document.querySelector('#form-add');
 // форма редактирования карточки
 const formEdit = document.querySelector('#form-edit');
 // попап редактировать карточку
@@ -132,11 +134,24 @@ function renderArrow(arr) {
 
 // ФУНКЦИИ 7 СПРИНТА
 
-// функция получает данные для формы редактирования из разметки
+// сбрасывает все кастомные ошибки на странице
+function reserCustomErrors () {
+  const errorsМessage =  document.querySelectorAll('.error-messege')
+  const errorsCustomValue = document.querySelectorAll('.popup__input')
+  errorsМessage.forEach(function(elem) {
+  elem.textContent = '';
+  });
+  errorsCustomValue.forEach(function(elem) {
+   elem.setCustomValidity('');
+  });
+ }
+
+// функция получает данные для формы редактирования из разметки и сбрасывает ошибки
 function toGetData() {
   // получить данные из со страницы и подставить их в форму
   formEditName.value = userName.textContent;
   formEditInfo.value = userInfo.textContent;
+  reserCustomErrors()
 }
 
 // функция записывает данные пользователя на страницу из полей ввода
@@ -145,7 +160,7 @@ function writeData() {
   userInfo.textContent = formEditInfo.value;
 }
 
-// функция меняет данные пользователя по закрытии формы
+// функция меняет данные пользователя по закрытии формы 
 function editForm(event) {
   event.preventDefault();
   writeData();
@@ -169,15 +184,64 @@ function openImage(event) {
   }
 }
 
-// функция выключения кнопки формы, принимает инпуты и кнопку
-function disableButton(field1, field2, button) {
-  if (field1.value.length === 0 || field2.value.length === 0) {
+// // функция выключения кнопки формы, принимает инпуты и кнопку
+// function disableButton(field1, field2, button) {
+//   if (!field1.value || !field2.value) {
+//     button.setAttribute('disabled', true);
+//   }
+//   else {
+//     button.removeAttribute('disabled');
+//   }
+// };
+
+// функция блокирует/разблокирует кнопку сабмита
+function setSubmitButtonState(elem, button) {
+  if (!elem) {
     button.setAttribute('disabled', true);
   }
   else {
     button.removeAttribute('disabled');
   }
-};
+}
+
+// Функция проверки одного поля, принимает элемент поля, проверяет на валидность, возвращает false
+function checkInputValidity(element) {
+  const errorМessage = document.querySelector(`#error-${element.id}`);
+
+  if (!element.value) {
+    // показывает ошибку
+    element.setCustomValidity(erorMessages.empty);
+    errorМessage.textContent = element.validationMessage;
+    return false;
+  }
+
+  else if (element.value.length < 2 || element.value.length > 30) {
+    element.setCustomValidity(erorMessages.shortOrLong);
+    errorМessage.textContent = element.validationMessage;
+    return false;
+  }
+
+  else {
+    element.setCustomValidity('');
+    errorМessage.textContent = '';
+  }
+}
+
+//основная функция setEventListeners, содержит обработчики
+function validationForm(form) {
+  const inputs = Array.from(form.elements);
+  const curretButton = form.querySelector('.button')
+  let valid = true;
+  inputs.forEach(function (elem) {
+    if (elem.classList.contains('popup__input')) {
+      checkInputValidity(elem);
+      if (checkInputValidity(elem) == false) {
+        valid = false;
+      }
+    }
+    setSubmitButtonState(valid, curretButton)
+  })
+}
 
 // пройти по исходному массиву функцией, чтобы получить данные для каждой карточки
 renderArrow(initialCards);
@@ -196,68 +260,17 @@ list.addEventListener('click', addNndRemoveLike);
 list.addEventListener('click', deleteCard);
 editPopup.addEventListener('submit', editForm);
 list.addEventListener('click', openImage);
-cardPopup.addEventListener('input', () => disableButton(cardTitle, cardLink, buttonSendCard));
+// cardPopup.addEventListener('input', () => disableButton(cardTitle, cardLink, buttonSendCard));
+formEditName.addEventListener('input', () => validationForm(formEdit));
+formEditInfo.addEventListener('input', () => validationForm(formEdit));
 
-
+cardTitle.addEventListener('input', () => validationForm(formAdd));
+cardLink.addEventListener('input', () => validationForm(formAdd));
 
 // текущие задачи 
 
 
-formEditName.addEventListener('input', () => validationForm(formEdit));
-formEditInfo.addEventListener('input', () => validationForm(formEdit));
-
-
-// нужна основная функция setEventListeners, содержит обработчики
-function validationForm(form) {
-  const inputs = Array.from(form.elements);
-  let valid = true;
-  inputs.forEach(function (elem) {
-    if (elem.classList.contains('popup__input')) {
-      checkInputValidity(elem);
-      if (checkInputValidity(elem) == false) {
-        valid = false;
-      }
-    }
-    setSubmitButtonState(valid, buttonEditCard)
-  })
-
-}
-
-// Функция проверки одного поля, принимает элемент поля, проверяет на валидность, возвращает false
-function checkInputValidity(element) {
-  const errorМessage = document.querySelector(`#error-${element.id}`)
-  // const element = element;
-  // проверить элемент на ошибку
-  console.log(element.validity)
-  if (element.value.length === 0) {
-    // показывает ошибку
-    element.setCustomValidity(erorMessages.empty);
-    errorМessage.textContent = element.validationMessage;
-    console.log(element.validity)
-    return false;
-  }
-  else if (element.value.length < 2 || element.value.length > 30) {
-    element.setCustomValidity(erorMessages.shortOrLong);
-    errorМessage.textContent = element.validationMessage;
-    console.log(element.validity)
-    return false;
-  }
-  else {
-    element.setCustomValidity('');
-    errorМessage.textContent = '';
-  }
-}
 
 
 
 
-// функция блокирует/разблокирует кнопку сабмита
-function setSubmitButtonState(elem, button) {
-  if (!elem) {
-    button.setAttribute('disabled', true);
-  }
-  else {
-    button.removeAttribute('disabled');
-  }
-
-}

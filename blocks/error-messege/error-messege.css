@@ -1,4 +1,6 @@
 .error-messege {
+    display: inline-block;
+    min-height: 14px;
     font-family: Inter;
     font-style: normal;
     font-weight: 100;
