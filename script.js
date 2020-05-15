@@ -42,6 +42,7 @@ const buttonCloseImage = document.querySelector('.popup-image__close');
 // открыть форму 
 function openPopup(elem) {
   elem.classList.toggle('popup_is-opened');
+  reserCustomErrors()
 };
 
 // закрыть форму
@@ -135,16 +136,16 @@ function renderArrow(arr) {
 // ФУНКЦИИ 7 СПРИНТА
 
 // сбрасывает все кастомные ошибки на странице
-function reserCustomErrors () {
-  const errorsМessage =  document.querySelectorAll('.error-messege')
+function reserCustomErrors() {
+  const errorsМessage = document.querySelectorAll('.error-messege')
   const errorsCustomValue = document.querySelectorAll('.popup__input')
-  errorsМessage.forEach(function(elem) {
-  elem.textContent = '';
+  errorsМessage.forEach(function (elem) {
+    elem.textContent = '';
   });
-  errorsCustomValue.forEach(function(elem) {
-   elem.setCustomValidity('');
+  errorsCustomValue.forEach(function (elem) {
+    elem.setCustomValidity('');
   });
- }
+}
 
 // функция получает данные для формы редактирования из разметки и сбрасывает ошибки
 function toGetData() {
@@ -184,16 +185,6 @@ function openImage(event) {
   }
 }
 
-// // функция выключения кнопки формы, принимает инпуты и кнопку
-// function disableButton(field1, field2, button) {
-//   if (!field1.value || !field2.value) {
-//     button.setAttribute('disabled', true);
-//   }
-//   else {
-//     button.removeAttribute('disabled');
-//   }
-// };
-
 // функция блокирует/разблокирует кнопку сабмита
 function setSubmitButtonState(elem, button) {
   if (!elem) {
@@ -209,10 +200,19 @@ function checkInputValidity(element) {
   const errorМessage = document.querySelector(`#error-${element.id}`);
 
   if (!element.value) {
-    // показывает ошибку
     element.setCustomValidity(erorMessages.empty);
     errorМessage.textContent = element.validationMessage;
     return false;
+  }
+
+  else if (element.classList.contains('popup__input_type_link-url')) {
+    element.setCustomValidity('');
+    errorМessage.textContent = '';
+    if (!element.validity.valid) {
+      element.setCustomValidity(erorMessages.notUrl);
+      errorМessage.textContent = element.validationMessage;
+      return false;
+    }
   }
 
   else if (element.value.length < 2 || element.value.length > 30) {
@@ -252,22 +252,24 @@ renderArrow(initialCards);
 buttonAdd.addEventListener('click', () => openPopup(cardPopup));
 buttonEdit.addEventListener('click', () => openPopup(editPopup));
 buttonEdit.addEventListener('click', toGetData);
+
 buttonCloseFormAdd.addEventListener('click', () => closePopup(cardPopup));
 buttonCloseFormEdit.addEventListener('click', () => closePopup(editPopup));
 buttonCloseImage.addEventListener('click', () => closePopup(popupImage));
+
 cardPopup.addEventListener('submit', createCard);
 list.addEventListener('click', addNndRemoveLike);
 list.addEventListener('click', deleteCard);
 editPopup.addEventListener('submit', editForm);
 list.addEventListener('click', openImage);
-// cardPopup.addEventListener('input', () => disableButton(cardTitle, cardLink, buttonSendCard));
+
 formEditName.addEventListener('input', () => validationForm(formEdit));
 formEditInfo.addEventListener('input', () => validationForm(formEdit));
 
 cardTitle.addEventListener('input', () => validationForm(formAdd));
 cardLink.addEventListener('input', () => validationForm(formAdd));
 
-// текущие задачи 
+
 
 
 

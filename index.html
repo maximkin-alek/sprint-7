@@ -32,11 +32,11 @@
       <div class="popup__content">
         <img src="./images/close.svg" alt="" class="popup__close popup-add-card__close">
         <h3 class="popup__title">Новое место</h3>
-        <form class="popup__form" name="new" id="form-add" novalidate>
+        <form class="popup__form" name="new" id="form-add">
           <input type="text" name="name" id="title" class="popup__input popup__input_type_name" placeholder="Название" required>
           <span class="error-messege" id="error-title"></span>
-          <input type="text" name="link" class="popup__input popup__input_type_link-url"
-            placeholder="Ссылка на картинку" id="link" required>
+          <input name="link" type="url" class="popup__input popup__input_type_link-url"
+            placeholder="Ссылка на картинку" id="link">
           <span class="error-messege" id="error-link"></span>
           <button type="submit" class="button popup__button popup-add-card__button" disabled>+</button>
         </form>
