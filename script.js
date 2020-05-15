@@ -147,6 +147,12 @@ function reserCustomErrors() {
   });
 }
 
+// функция сбрасывает ошибку поля, принимает элемент поля и элемент ошибки
+function resetInputError(input, error) {
+  input.setCustomValidity('');
+  error.textContent = '';
+}
+
 // функция получает данные для формы редактирования из разметки и сбрасывает ошибки
 function toGetData() {
   // получить данные из со страницы и подставить их в форму
@@ -206,8 +212,7 @@ function checkInputValidity(element) {
   }
 
   else if (element.classList.contains('popup__input_type_link-url')) {
-    element.setCustomValidity('');
-    errorМessage.textContent = '';
+    resetInputError(element, errorМessage);
     if (!element.validity.valid) {
       element.setCustomValidity(erorMessages.notUrl);
       errorМessage.textContent = element.validationMessage;
@@ -222,8 +227,7 @@ function checkInputValidity(element) {
   }
 
   else {
-    element.setCustomValidity('');
-    errorМessage.textContent = '';
+    resetInputError(element, errorМessage);
   }
 }
 
