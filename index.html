@@ -50,7 +50,7 @@
         <form class="popup__form" name="new" id="form-edit">
           <input type="text" name="name" id="name" class="popup__input popup__input_type_author-name" required minlength="2" maxlength="30" placeholder="Имя">
           <span class="error-messege" id="error-name"></span>
-          <input type="text" name="link" id="info" class="popup__input popup__input_type_info" required placeholder="О себе">
+          <input type="text" name="link" id="info" class="popup__input popup__input_type_info" minlength="2" maxlength="30" required placeholder="О себе">
           <span class="error-messege" id="error-info"></span>
           <button type="submit" class="button popup__button popup-edit-card__button">Сохранить</button>
         </form>

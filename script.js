@@ -41,10 +41,18 @@ const buttonCloseImage = document.querySelector('.popup-image__close');
 
 // открыть форму
 function openPopup(elem) {
+  const form = elem.querySelector('.popup__form')
   elem.classList.toggle('popup_is-opened');
   // Надо исправить
   // Метод использован до его определения
-  reserCustomErrors()
+  // reserCustomErrors()
+  if (elem == cardPopup) {
+    cleanCardForm();
+  }
+  else if (elem == editPopup) {
+    cleanUserForm()
+  }
+  form.reset();
 };
 
 // закрыть форму
@@ -182,14 +190,14 @@ function reserCustomErrors() {
   */
   const errorsМessage = document.querySelectorAll('.error-messege')
   const errorsCustomValue = document.querySelectorAll('.popup__input')
-  // Можно лучше
-  // (elem) => {...}
-  errorsМessage.forEach(function (elem) {
+  // Можно лучше +
+  // (elem) => {...} +
+  errorsМessage.forEach((elem) => {
     elem.textContent = '';
   });
-  // Можно лучше
-  // (elem) => {...}
-  errorsCustomValue.forEach(function (elem) {
+  // Можно лучше +
+  // (elem) => {...} +
+  errorsCustomValue.forEach((elem) => {
     elem.setCustomValidity('');
   });
 }
@@ -253,15 +261,15 @@ function checkInputValidity(element) {
   const errorМessage = document.querySelector(`#error-${element.id}`);
   // Надо исправить
 
-  // 1) Задайте инпутам атрибуты maxlength, minlength, required, а инпуту с ссылкой -- type="URL"
-  // 2) Забудьте вообще как звали какой-то инпут, это все хардкод, особенно как вы URL отрабатываете
-  //    Все надо проверять обезличенно
+  // 1) Задайте инпутам атрибуты maxlength, minlength, required, а инпуту с ссылкой -- type="URL" +
+  // 2) Забудьте вообще как звали какой-то инпут, это все хардкод, особенно как вы URL отрабатываете +
+  //    Все надо проверять обезличенно +
   // 3) Читйте https://developer.mozilla.org/ru/docs/Learn/HTML/Forms/Валидация_формы
   //    Раздел про проверку средствами HTML+JS
-  // 4) Через validity атрибуты проверяете каждый поступивший элемент, не разбирая что там.
-  //    Все атрибуты все равно проставлены в HTML будут, тип text или URL, обязательный или нет
+  // 4) Через validity атрибуты проверяете каждый поступивший элемент, не разбирая что там. +
+  //    Все атрибуты все равно проставлены в HTML будут, тип text или URL, обязательный или нет +
 
-  // Тут все надо переделать.
+  // Тут все надо переделать. +
 
   if (!element.value) {
     element.setCustomValidity(erorMessages.empty);
@@ -270,47 +278,56 @@ function checkInputValidity(element) {
     // После return не надо ставить else if +
     // Просто начинайте с if -- не стоит сложные логические ветвления делать без особой надобности +
   }
-  if (element.value.length < 2 || element.value.length > 30) {
+  if (element.validity.tooShort || element.validity.tooLong) {
     element.setCustomValidity(erorMessages.shortOrLong);
     errorМessage.textContent = element.validationMessage;
     return false;
   }
-  
+  if (element.validity.typeMismatch) {
+    element.setCustomValidity(erorMessages.notUrl);
+    errorМessage.textContent = element.validationMessage;
+    return false;
+  }
   resetInputError(element, errorМessage);
   return true;
 }
 
-// основная функция setEventListeners, содержит обработчики
-
-// Вам как раз нужен метод setEventListeners -- пока что его нет.
-// Метод setEventListeners принимает на вход форму.
-// Из формы вибирает инпуты и кнопку
-// На элемент формы ставится обработчик события input
+// основная функция setEventListeners, содержит обработчики + 
+// Вам как раз нужен метод setEventListeners -- пока что его нет. +
+// Метод setEventListeners принимает на вход форму. +
+// Из формы вибирает инпуты и кнопку +
+// На элемент формы ставится обработчик события input +
 //
-// formElement.addEventListener('input',() => {
-//    Тут бежим по инпутам, проверяем их валидность и командуем кнопкой
-//    Массив не передаем сюда, просто к нему обращемся, как и к кнопке.
-// })
-// Для установки валидации на форму вызываете 1 раз в основном теле скрипта
-// setEventListeners с переданной в него формой
+// formElement.addEventListener('input',() => { +
+//    Тут бежим по инпутам, проверяем их валидность и командуем кнопкой +
+//    Массив не передаем сюда, просто к нему обращемся, как и к кнопке. +
+// }) +
+// Для установки валидации на форму вызываете 1 раз в основном теле скрипта +
+// setEventListeners с переданной в него формой +
 
-// Этот метод будет изменен или даже удален
-function validationForm(form) {
-  // Надо исправить -- тут все элементы формы, а вам надо выбрать инпуты.
-  // Мало ли что туда еще завтра дизайнер добавит.
-  const inputs = Array.from(form.elements);
-  const curretButton = form.querySelector('.button')
-  let valid = true;
-  inputs.forEach(function (elem) {
-    if (elem.classList.contains('popup__input')) {
-      checkInputValidity(elem);
+function setEventListeners(form) {
+  const formElement = form;
+  // Из формы вибирает инпуты и кнопку
+  const formElements = Array.from(formElement.elements);
+  const currentButton = formElement.querySelector('.button');
+  const inputs = formElements.filter((elem) => {
+    return elem.classList.contains('popup__input')
+  });
+  // На элемент формы ставится обработчик события input
+  form.addEventListener('input', () => {
+    let valid = true;
+    inputs.forEach((elem) => {
       if (checkInputValidity(elem) == false) {
         valid = false;
       }
-    }
-    setSubmitButtonState(valid, curretButton)
-  })
+      setSubmitButtonState(valid, currentButton)
+    });
+  });
 }
+// 
+
+
+
 
 // пройти по исходному массиву функцией, чтобы получить данные для каждой карточки
 renderArrow(initialCards);
@@ -332,21 +349,67 @@ list.addEventListener('click', deleteCard);
 editPopup.addEventListener('submit', editForm);
 list.addEventListener('click', openImage);
 
-// Ставить слушатели надо на форму а не на инпуты, если их завтра 100 будет, то мы в них потонем
-// Выше объяснение есть.
-formEditName.addEventListener('input', () => validationForm(formEdit));
-formEditInfo.addEventListener('input', () => validationForm(formEdit));
-
-cardTitle.addEventListener('input', () => validationForm(formAdd));
-cardLink.addEventListener('input', () => validationForm(formAdd));
+// Ставить слушатели надо на форму а не на инпуты, если их завтра 100 будет, то мы в них потонем +
+// Выше объяснение есть. +
 
 
+setEventListeners(formEdit);
+setEventListeners(formAdd);
 // Здравствуйте
 // Код у вас неплохой, но с валидацией и установкой слушателей вы немного не дошли до финала.
 // Все комментарии я оставил. Исправьте замечания и присылайте на проверку.
 
 // переделки: 
 // 1. чистка всех форм
-// 2. переделка слушателей
-// 3. переделка функции проверки карточки
-// 4 
+function makeCleaner(popup) {
+  const errorsМessage = popup.querySelectorAll('.error-messege')
+  const errorsCustomValue = popup.querySelectorAll('.popup__input')
+  const errorCleaner = () => {
+    errorsМessage.forEach((elem) => {
+      elem.textContent = '';
+    });
+    errorsCustomValue.forEach((elem) => {
+      elem.setCustomValidity('');
+    });
+  };
+  return errorCleaner;
+}
+
+const cleanUserForm = makeCleaner(editPopup);
+const cleanCardForm = makeCleaner(cardPopup);
+
+/*
+    Массив инпутов лучше один раз получить и тут просто его использовать, чтобы каждый раз не собирать.
+    Это может не самое изящное решение, как и чистка всех инпутов разом, а не у конкретной формы,
+    но сейчас вполне допустимое, тем более скоро вы научитесь решать и такие задачи используя ООП, например.
+
+    Хотя сейчас могу предложить вам интересное решение.
+
+    Функция может вернуть как результат другую функцию. Это важный и полезный момент.
+
+    Делаете функцию, например, makeCleaner, которая принимает форму или попап на вход. Эта функция собирает
+    оттуда все инпуты и подстрочники в массивы. Далее внутри функции задаете другую функцию:
+
+    const errorCleaner = () =>{
+      тут вы в цикле бежите по массиву и все чистите
+    };
+
+    Важно, что созданная внутри функция errorCleaner не должна принимать параметров, она берет
+    массив из верхней, родительской области видимости.
+    и делаем теперь просто
+
+    return errorCleaner;
+
+    в теле скрипта делаем 2 вызова
+
+    const cleanUserForm = makeCleaner(userFormPopup);
+    const cleanCardForm = makeCleaner(userCardPopup);
+
+    Все, у нас есть по функции чистки индивидуально для каждой формы.
+
+    Теперь если вам надо очистить ошибки то вы просто выполняете cleanerUserForm(); или cleanCardForm();
+    И теперь уже каждый раз элементы не будут выбираться из DOM.
+
+    Созданная вами функция будет иметь доступ к массиву инпутов, она будет брать его из замыкания.
+    Прочитать про замыкание можно https://learn.javascript.ru/closure
+  */
