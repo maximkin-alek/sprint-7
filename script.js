@@ -38,23 +38,42 @@ const popupImage = document.querySelector('.popup-image');
 // кнопка закрыть попап с картинкой
 const buttonCloseImage = document.querySelector('.popup-image__close');
 
+// чистка формы от ошибок
+function makeCleaner(popup) {
+  const errorsМessage = popup.querySelectorAll('.error-messege')
+  const errorsCustomValue = popup.querySelectorAll('.popup__input')
+  const errorCleaner = () => {
+    errorsМessage.forEach((elem) => {
+      elem.textContent = '';
+    });
+    errorsCustomValue.forEach((elem) => {
+      elem.setCustomValidity('');
+    });
+  };
+  return errorCleaner;
+}
+
+// функции с замыканием
+const cleanUserForm = makeCleaner(editPopup);
+const cleanCardForm = makeCleaner(cardPopup);
+
 
 // открыть форму
 function openPopup(elem) {
   const form = elem.querySelector('.popup__form')
   elem.classList.toggle('popup_is-opened');
-  // Надо исправить
-  // Метод использован до его определения
-  // reserCustomErrors()
+  // Надо исправить +
+  // Метод использован до его определения +
+  if (form) {
+    form.reset()
+  }
   if (elem == cardPopup) {
     cleanCardForm();
   }
-  else if (elem == editPopup) {
+  if (elem == editPopup) {
     cleanUserForm()
   }
-  form.reset();
-};
-
+}
 // закрыть форму
 function closePopup(elem) {
   elem.classList.toggle('popup_is-opened');
@@ -151,69 +170,17 @@ function renderArrow(arr) {
 
 // ФУНКЦИИ 7 СПРИНТА
 
-// сбрасывает все кастомные ошибки на странице
-function reserCustomErrors() {
-  /*
-    Массив инпутов лучше один раз получить и тут просто его использовать, чтобы каждый раз не собирать.
-    Это может не самое изящное решение, как и чистка всех инпутов разом, а не у конкретной формы,
-    но сейчас вполне допустимое, тем более скоро вы научитесь решать и такие задачи используя ООП, например.
-
-    Хотя сейчас могу предложить вам интересное решение.
-
-    Функция может вернуть как результат другую функцию. Это важный и полезный момент.
-
-    Делаете функцию, например, makeCleaner, которая принимает форму или попап на вход. Эта функция собирает
-    оттуда все инпуты и подстрочники в массивы. Далее внутри функции задаете другую функцию:
-
-    const errorCleaner = () =>{
-      тут вы в цикле бежите по массиву и все чистите
-    };
-
-    Важно, что созданная внутри функция errorCleaner не должна принимать параметров, она берет
-    массив из верхней, родительской области видимости.
-    и делаем теперь просто
-
-    return errorCleaner;
-
-    в теле скрипта делаем 2 вызова
-
-    const cleanUserForm = makeCleaner(userFormPopup);
-    const cleanCardForm = makeCleaner(userCardPopup);
-
-    Все, у нас есть по функции чистки индивидуально для каждой формы.
-
-    Теперь если вам надо очистить ошибки то вы просто выполняете cleanerUserForm(); или cleanCardForm();
-    И теперь уже каждый раз элементы не будут выбираться из DOM.
-
-    Созданная вами функция будет иметь доступ к массиву инпутов, она будет брать его из замыкания.
-    Прочитать про замыкание можно https://learn.javascript.ru/closure
-  */
-  const errorsМessage = document.querySelectorAll('.error-messege')
-  const errorsCustomValue = document.querySelectorAll('.popup__input')
-  // Можно лучше +
-  // (elem) => {...} +
-  errorsМessage.forEach((elem) => {
-    elem.textContent = '';
-  });
-  // Можно лучше +
-  // (elem) => {...} +
-  errorsCustomValue.forEach((elem) => {
-    elem.setCustomValidity('');
-  });
-}
-
 // функция сбрасывает ошибку поля, принимает элемент поля и элемент ошибки
 function resetInputError(input, error) {
   input.setCustomValidity('');
   error.textContent = '';
 }
 
-// функция получает данные для формы редактирования из разметки и сбрасывает ошибки
+// функция получает данные для формы редактирования из разметки
 function toGetData() {
   // получить данные из со страницы и подставить их в форму
   formEditName.value = userName.textContent;
   formEditInfo.value = userInfo.textContent;
-  reserCustomErrors()
 }
 
 // функция записывает данные пользователя на страницу из полей ввода
@@ -264,8 +231,8 @@ function checkInputValidity(element) {
   // 1) Задайте инпутам атрибуты maxlength, minlength, required, а инпуту с ссылкой -- type="URL" +
   // 2) Забудьте вообще как звали какой-то инпут, это все хардкод, особенно как вы URL отрабатываете +
   //    Все надо проверять обезличенно +
-  // 3) Читйте https://developer.mozilla.org/ru/docs/Learn/HTML/Forms/Валидация_формы
-  //    Раздел про проверку средствами HTML+JS
+  // 3) Читйте https://developer.mozilla.org/ru/docs/Learn/HTML/Forms/Валидация_формы +
+  //    Раздел про проверку средствами HTML+JS +
   // 4) Через validity атрибуты проверяете каждый поступивший элемент, не разбирая что там. +
   //    Все атрибуты все равно проставлены в HTML будут, тип text или URL, обязательный или нет +
 
@@ -326,9 +293,6 @@ function setEventListeners(form) {
 }
 // 
 
-
-
-
 // пройти по исходному массиву функцией, чтобы получить данные для каждой карточки
 renderArrow(initialCards);
 
@@ -349,34 +313,18 @@ list.addEventListener('click', deleteCard);
 editPopup.addEventListener('submit', editForm);
 list.addEventListener('click', openImage);
 
+setEventListeners(formEdit);
+setEventListeners(formAdd);
 // Ставить слушатели надо на форму а не на инпуты, если их завтра 100 будет, то мы в них потонем +
 // Выше объяснение есть. +
 
 
-setEventListeners(formEdit);
-setEventListeners(formAdd);
+
 // Здравствуйте
 // Код у вас неплохой, но с валидацией и установкой слушателей вы немного не дошли до финала.
 // Все комментарии я оставил. Исправьте замечания и присылайте на проверку.
 
-// переделки: 
-// 1. чистка всех форм
-function makeCleaner(popup) {
-  const errorsМessage = popup.querySelectorAll('.error-messege')
-  const errorsCustomValue = popup.querySelectorAll('.popup__input')
-  const errorCleaner = () => {
-    errorsМessage.forEach((elem) => {
-      elem.textContent = '';
-    });
-    errorsCustomValue.forEach((elem) => {
-      elem.setCustomValidity('');
-    });
-  };
-  return errorCleaner;
-}
 
-const cleanUserForm = makeCleaner(editPopup);
-const cleanCardForm = makeCleaner(cardPopup);
 
 /*
     Массив инпутов лучше один раз получить и тут просто его использовать, чтобы каждый раз не собирать.
