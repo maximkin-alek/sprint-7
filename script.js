@@ -267,28 +267,17 @@ function checkInputValidity(element) {
     element.setCustomValidity(erorMessages.empty);
     errorМessage.textContent = element.validationMessage;
     return false;
-    // После return не надо ставить else if
-    // Просто начинайте с if -- не стоит сложные логические ветвления делать без особой надобности
+    // После return не надо ставить else if +
+    // Просто начинайте с if -- не стоит сложные логические ветвления делать без особой надобности +
   }
-  else if (element.classList.contains('popup__input_type_link-url')) {
-    resetInputError(element, errorМessage);
-    if (!element.validity.valid) {
-      element.setCustomValidity(erorMessages.notUrl);
-      errorМessage.textContent = element.validationMessage;
-      return false;
-    }
-  }
-
-  else if (element.value.length < 2 || element.value.length > 30) {
+  if (element.value.length < 2 || element.value.length > 30) {
     element.setCustomValidity(erorMessages.shortOrLong);
     errorМessage.textContent = element.validationMessage;
     return false;
   }
-  // Тут else уже не нужен, продолжайте без него
-  else {
-    resetInputError(element, errorМessage);
-    // Добавьте return true;
-  }
+  
+  resetInputError(element, errorМessage);
+  return true;
 }
 
 // основная функция setEventListeners, содержит обработчики
@@ -356,3 +345,8 @@ cardLink.addEventListener('input', () => validationForm(formAdd));
 // Код у вас неплохой, но с валидацией и установкой слушателей вы немного не дошли до финала.
 // Все комментарии я оставил. Исправьте замечания и присылайте на проверку.
 
+// переделки: 
+// 1. чистка всех форм
+// 2. переделка слушателей
+// 3. переделка функции проверки карточки
+// 4 
